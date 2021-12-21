@@ -1,4 +1,4 @@
-//initializes variables
+//initialize variables and import player ship images
 var greenShip_image = new Image();
 greenShip_image.src = "green.png";
 var blueShip_image = new Image();
@@ -7,7 +7,9 @@ var redShip_image = new Image();
 redShip_image.src = "red.png";
 var game_data = {"bodies": 0, "players": 0, "dyson_sphere": 0};
 var announced_winner = false;
-//function to proccess incoming data from websockets 
+
+//function to proccess incoming data from websockets
+//updates player gui and game_data array accessed below using updated info 
 function draw(i, ws) {
 ws.onmessage = (webSocketMessage) => {
         response_text = webSocketMessage.data;
@@ -31,6 +33,7 @@ ws.onmessage = (webSocketMessage) => {
 	};
 };
 
+//recursively call draw function
 setTimeout(() => {draw(i + 1, ws); }, 10);
 if (i%100 == 0){
 const messageBody = {"type": "get_data"};
@@ -58,15 +61,22 @@ canvas.height = screen.height*2;
             var dx = radius*spacing*Math.cos(Math.PI*2*(theta+1)/starsPerRing[radius]);
             var dy = radius*spacing*Math.sin(Math.PI*2*(theta+1)/starsPerRing[radius]);
             circle.arc(center[0] + dx, center[1] + dy, (1/(1+radius)**0.5)*spacing/5, 0, 2 * Math.PI);
-            if (body_number < 94){
+            //determines the color of each body that is not the central star
+	    if (body_number < 94){
+		//retrieves the current planet owner from the database
             	color2 = game_data["bodies"][body_number]["controller"];
+		//Sets the planet color to the color of its player owner
 	    	if (color2 == 1) {ctx.fillStyle = 'rgba('+7+','+7+','+255+',1)';}
 	    	else if (color2 == 2) {ctx.fillStyle = 'rgba('+7+','+255+','+28+',1)';}
 	    	else if (color2 == 3) {ctx.fillStyle = 'rgba('+255+','+7+','+7+',1)';}
+		//Colors the planet grey if it is unowned
 		else {ctx.fillStyle = 'rgba('+192+','+192+','+192+',1)';}
-            } else {
+	    }
+	    //Sets the color of the central star and creates a pulsing animation
+	    else {
             ctx.fillStyle = 'rgba('+(2*Math.abs((i%300)-150)).toString()+','+(1.20*Math.abs(((i+10)%300)-150)).toString()+','+ Math.abs((i%20)-10).toString() +',1)';
 		ctx.lineWidth = 15;
+		//Sets the outer ring color of the dyson sphere based on its current owner
 		if (game_data["dyson_sphere"][0]["controller"] == 0) {ctx.strokeStyle = 'rgba('+255+','+255+','+255+',1)';}
 		if (game_data["dyson_sphere"][0]["controller"] == 1) {ctx.strokeStyle = 'rgba('+7+','+7+','+255+',1)';}
 		if (game_data["dyson_sphere"][0]["controller"] == 2) {ctx.strokeStyle = 'rgba('+7+','+255+','+28+',1)';}
@@ -74,14 +84,19 @@ canvas.height = screen.height*2;
 		ctx.stroke(circle);
             }
             ctx.fill(circle);
-	    //draws the ship rotating around the current body
+	    //animates the ship rotating around the current body using the time interval i
+	    //determines if the current body number has player 1 orbiting it
             if (body_number == game_data["players"][0]["current_body"]){
+		//translates the canvas image to the center of the body and rotates it an angle according to a time interval i
                 ctx.translate(center[0]+dx, center[1]+dy);
 		ctx.rotate(i/20);
+		//draws the ship
 		ctx.drawImage(blueShip_image, -24-20, -16, 48, 32);
+		//reverts the canvas back to its original position leaving the rotated ship
 		ctx.rotate(-i/20);
 		ctx.translate(-center[0]-dx, -center[1]-dy);
             }
+	    //repeats method used for player 1
             if (body_number == game_data["players"][1]["current_body"]){
 		ctx.translate(center[0]+dx, center[1]+dy);
 		ctx.rotate(i/20 + 2*Math.PI/3);

@@ -26,7 +26,9 @@ con.query("USE test_base", function (err, result){
 			var outbound = "";
 			//process incoming message and write outbound message
 			if ((type == "movement") && (player > 0)){
-      				next_body = move(player, key);
+      				//updates database based om player movement
+				next_body = move(player, key);
+				//retrieves data and sends it to all browser users
 				dataget(function(result){
 				database = result;
 				outbound = JSON.stringify(database);
@@ -36,6 +38,7 @@ con.query("USE test_base", function (err, result){
 				});
 			}
 			else if (type == "get_data"){
+				//retrieves all data from the database and sends it to the browser
 				dataget(function(result){
 				database = result;
 				balance(function(result){
@@ -137,6 +140,7 @@ function dyson(player){
 		con.query("SELECT controller FROM bodies WHERE body_number in(93,92,91,90,89,88)", function (err, result) {
 				if (err) throw err;
 				owners = result;
+				//calculate how many bodies in inner ring player owns
 				var controlled_bodies_in_center = 0;
 				for (let i = 0; i < 6; i++){
 					if (player == result[i]["controller"]){
