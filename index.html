@@ -1,0 +1,156 @@
+
+<html>
+
+<body id="box" onload="begin()">
+<head>
+<!-- Imports the required scripts -->
+	<script src="jquery.min.js"></script>
+	<script src="create_websocket_connection.js"></script>
+	<script src="keystroke_detector.js"></script>
+	<script src="display_stars.js"></script>
+</head> 
+<!-- Creates navigation bar -->
+<div class="navbar">
+  <button type="button" onclick="reset()">Reset Game</button>
+   <div class="dropdown">
+    <button class="dropbtn" id="Player">Player
+      <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-content">
+      <button type="button" onclick="setPlayer(1)">Player 1</button>
+      <button type="button" onclick="setPlayer(2)">Player 2</button>
+      <button type="button" onclick="setPlayer(3)">Player 3</button>
+    </div>
+  </div>
+<!-- Creates display boxes for pertinent info -->
+  <div class="title"> System-17C </div>
+  <div class="money" id="dat_dcost"> 0 </div>
+  <div class="titleMini"> D-cost </div>
+  <div class="money" id="dat_dyson"> 0 </div>
+  <div class="titleMini"> Dyson </div>
+  <div class="money" id="dat_cost"> 0 </div>
+  <div class="titleMini"> P-Cost </div>
+  <div class="money" id="dat_production"> 0 </div>
+  <div class="titleMini"> Production </div>
+  <div class="money" id="dat_money"> 0 </div>
+  <div class="titleMini"> Credits </div>
+</div>
+<canvas id="canvas"></canvas>
+
+</body>
+</html>
+<script>
+<!-- Functions to be called for each button press -->
+var player = 0;
+function setPlayer(player_num){
+	player = player_num;
+	document.getElementById("Player").innerHTML = "Player " + player_num;
+	player_number = (player_num).toString();
+}
+function reset(){
+	const xhttp = new XMLHttpRequest();
+	xhttp.onload = function(){
+	}
+	xhttp.open("GET", "reset", true);
+	xhttp.send();
+}
+</script>
+<!-- Formats navigation bar -->
+<style>
+/* Navbar container */
+.navbar {
+  overflow: hidden;
+  background-color: #333;
+  font-family: Arial;
+}
+
+/* The dropdown container */
+.dropdown {
+  float: left;
+  overflow: hidden;
+}
+.navbar button {
+  float: left;
+  font-size: 32px;
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 28px 32px;
+  text-decoration: none;
+  display: inline-block;
+}
+/* Dropdown button */
+.dropdown .dropbtn {
+  font-size: 32px;
+  border: none;
+  outline: none;
+  color: white;
+  padding: 30px 32px;
+  background-color: inherit;
+  font-family: inherit; /* Important for vertical align on mobile phones */
+  margin: 0; /* Important for vertical align on mobile phones */
+  display: inline-block;
+}
+.money {
+  font-family: Arial;
+  font-size: 32px;
+  background-color: white;
+  color: black;
+  float: right;
+  padding: 26px 28px 8px 28px;
+  margin: 8px 20px;
+  border: 5px inset red;
+  display: inline-block;
+}
+.title {
+  font-family: Fantasy, Arial;
+  font-size: 48px;
+  background-color: #333;
+  text-shadow: 2px 2px white;
+  color: red;
+  padding: 19px 5% 19px 20%;
+  display: inline-block;
+}
+.titleMini {
+  font-family: Fantasy;
+  font-size: 32px;
+  color: white;
+  float: right;
+  padding: 26px 8px 8px 8px;
+  margin: 8px 8px;
+  display: inline-block;
+}
+/* Add a red background color to navbar links on hover */
+.navbar button:hover, .dropdown:hover .dropbtn {
+  background-color: red;
+}
+
+/* Dropdown content (hidden by default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content button {
+  float: none;
+  color: white;
+  padding: 24px 32px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+/* Add a grey background color to dropdown links on hover */
+.dropdown-content button:hover {
+  background-color: #ddd;
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>
